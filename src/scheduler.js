@@ -147,7 +147,7 @@ async function processChannel(bot, channel, now) {
     ? await Post.findByIdAndUpdate(
         planned._id,
         { $set: { text, status: 'draft' } },
-        { new: true }
+        { returnDocument: 'after' }
       )
     : await Post.create({
         ownerId: channel.ownerId,

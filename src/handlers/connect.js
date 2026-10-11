@@ -223,7 +223,7 @@ export async function handleTopic(ctx, text) {
   const channel = await Channel.findOneAndUpdate(
     { _id: channelId, ownerId: ctx.from.id }, // ownerId — xavfsizlik
     { $set: { topic, active: true } },
-    { new: true }
+    { returnDocument: 'after' }
   );
 
   if (!channel) {

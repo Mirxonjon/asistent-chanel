@@ -22,7 +22,7 @@ export async function auth(ctx, next) {
       },
       $setOnInsert: { telegramId: from.id, state: null },
     },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
   );
 
   return next();

@@ -295,7 +295,7 @@ async function saveSchedule(ctx, channelId, count, times) {
   const channel = await Channel.findOneAndUpdate(
     { _id: channelId, ownerId: ctx.from.id },
     { $set: { postsPerDay: count, times } },
-    { new: true }
+    { returnDocument: 'after' }
   );
 
   if (!channel) {
@@ -359,7 +359,7 @@ export async function turnScheduleOff(ctx, channelId) {
   const channel = await Channel.findOneAndUpdate(
     { _id: channelId, ownerId: ctx.from.id },
     { $set: { postsPerDay: 0, times: [], nextRunAt: null } },
-    { new: true }
+    { returnDocument: 'after' }
   );
 
   if (!channel) return ctx.answerCbQuery('Kanal topilmadi', { show_alert: true });
@@ -423,7 +423,7 @@ export async function setTimezone(ctx, channelId, tz) {
   const channel = await Channel.findOneAndUpdate(
     { _id: channelId, ownerId: ctx.from.id },
     { $set: { timezone: tz } },
-    { new: true }
+    { returnDocument: 'after' }
   );
   if (!channel) return ctx.reply('Kanal topilmadi. /menyu');
 

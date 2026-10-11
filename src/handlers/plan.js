@@ -129,7 +129,7 @@ export async function handlePlanTopicText(ctx, text) {
   const channel = await Channel.findOneAndUpdate(
     { _id: channelId, ownerId: ctx.from.id },
     { $set: { planTopic: topic } },
-    { new: true }
+    { returnDocument: 'after' }
   );
 
   if (!channel) {
