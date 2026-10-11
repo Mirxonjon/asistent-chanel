@@ -1,0 +1,33 @@
+{
+  "name": "asistent-chanel",
+  "version": "1.0.0",
+  "description": "AI kanal assistent bot - mavzu bo'yicha post yozib kanalga joylaydi",
+  "private": true,
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "models": "node scripts/list-models.js",
+    "test": "node --test \"tests/**/*.test.js\"",
+    "peek": "node scripts/peek.js",
+    "sim": "node scripts/simulate-button.js",
+    "plan": "node scripts/test-plan.js",
+    "extend": "node scripts/test-extend.js",
+    "manual": "node scripts/test-manual.js",
+    "plantopic": "node scripts/test-plantopic.js",
+    "confirm": "node scripts/test-confirm.js",
+    "challenges": "node scripts/test-challenges.js",
+    "migrate": "node scripts/migrate.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "dotenv": "^18.0.6",
+    "mongoose": "^9.11.1",
+    "node-cron": "^4.6.0",
+    "openai": "^7.31.0",
+    "telegraf": "^4.16.3"
+  }
+}
