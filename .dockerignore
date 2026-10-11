@@ -1,0 +1,19 @@
+# Image ichiga tushmasligi kerak bo'lganlar
+node_modules
+npm-debug.log*
+
+# 🔐 Kalitlar image'ga BAKED bo'lmasin.
+# .env konteynerga ishga tushganda env_file orqali beriladi.
+.env
+.env.*
+!.env.example
+
+.git
+.gitignore
+
+tests
+*.log
+README.md
+Dockerfile
+docker-compose*.yml
+.dockerignore

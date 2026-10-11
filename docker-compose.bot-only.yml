@@ -1,0 +1,56 @@
+# Faqat bot. MongoDB serverda ALLAQACHON ishlab turganda shu ishlatiladi.
+#
+#   docker compose -f docker-compose.bot-only.yml up -d --build
+#   docker compose -f docker-compose.bot-only.yml logs -f
+#
+# Ikkinchi Mongo ko'tarilmaydi — mavjudiga ulanadi.
+#
+# ---- Sozlash ----
+# .env ga qo'shing (docker-compose.bot-only.yml faqat shularni o'qiydi):
+#
+#   MONGO_NETWORK=mongo_default        ← mavjud mongo qaysi tarmoqda
+#   MONGODB_URI=mongodb://user:parol@mongodb:27017/postAi?authSource=admin
+#                                        ↑ konteyner nomi, localhost EMAS
+#
+# Tarmoq nomini bilish:  docker inspect <mongo-konteyner> \
+#                          --format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}} {{end}}'
+#
+# ⚠️ Paroldagi maxsus belgilar URL-kodlanishi shart:
+#     $ → %24     % → %25     ^ → %5E     @ → %40     : → %3A     / → %2F
+
+services:
+  bot:
+    build: .
+    image: postchi-ai:latest
+    container_name: postchi-bot
+    restart: unless-stopped
+
+    env_file: .env
+
+    environment:
+      TZ: ${DEFAULT_TIMEZONE:-Asia/Tashkent}
+      NODE_ENV: production
+
+    networks:
+      # Mavjud mongo tarmog'i — shu orqali konteyner nomi bilan ulanadi
+      - mongo
+
+    # Serverda boshqa loyihalar ham bor — bot ularning resursini yeb
+    # qo'ymasligi uchun cheklaymiz. Botga bundan ko'pi kerak emas.
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "0.50"
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  mongo:
+    external: true
+    # .env dagi MONGO_NETWORK qiymati. Berilmasa mongo_default ishlatiladi.
+    name: ${MONGO_NETWORK:-mongo_default}

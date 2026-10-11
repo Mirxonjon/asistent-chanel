@@ -1,0 +1,64 @@
+# To'liq to'plam: bot + MongoDB.
+# Serverda hech narsa o'rnatilmagan bo'lsa shu ishlatiladi.
+#
+#   docker compose up -d --build
+#   docker compose logs -f bot
+#
+# Serverda MongoDB allaqachon bor bo'lsa → docker-compose.bot-only.yml
+
+services:
+  bot:
+    build: .
+    image: postchi-ai:latest
+    container_name: postchi-bot
+    restart: unless-stopped
+
+    # Kalitlar .env dan o'qiladi (image ichida emas)
+    env_file: .env
+
+    environment:
+      # .env dagi localhost konteyner ichida o'zini bildiradi —
+      # shuning uchun mongo servisining nomiga almashtiramiz.
+      MONGODB_URI: mongodb://mongo:27017/postAi
+      TZ: ${DEFAULT_TIMEZONE:-Asia/Tashkent}
+      NODE_ENV: production
+
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+    # Log cheksiz o'smasin — diskni to'ldirib qo'ymasin
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  mongo:
+    image: mongo:7
+    container_name: postchi-mongo
+    restart: unless-stopped
+
+    # ⚠️ Port TASHQARIGA ochilmaydi. Faqat bot konteyneri ko'radi.
+    # Tashqaridan ulanish kerak bo'lsa: ports: ["127.0.0.1:27017:27017"]
+    expose:
+      - "27017"
+
+    volumes:
+      - mongo-data:/data/db
+
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  mongo-data:
